@@ -3,14 +3,15 @@
 import { useState } from "react";
 
 type Message = {
-  role: "user" | "ai";
+  role: "user" | "assistant";
   content: string;
 };
 
 export default function Home() {
   const [message, setMessage] = useState("");
+  const [open, setOpen] = useState(0);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "ai", content: "Hello! How can I help you today?" },
+    { role: "assistant", content: "Hello! How can I help you today?" },
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -33,26 +34,32 @@ export default function Home() {
       });
 
       // TODO: Handle the response from the chat API to display the AI response in the UI
-
-
-
-
+      const data = await response.json();
+      console.log(data);
+      setMessages(prev => [
+        ...prev,
+        { role: "assistant", content: data.message },
+      ]);
     } catch (error) {
       console.error("Error:", error);
     } finally {
       setIsLoading(false);
     }
   };
+  // const shareModel = () =>{
 
-
+  // }
   // TODO: Modify the color schemes, fonts, and UI as needed for a good user experience
   // Refer to the Tailwind CSS docs here: https://tailwindcss.com/docs/customizing-colors, and here: https://tailwindcss.com/docs/hover-focus-and-other-states
   return (
     <div className="flex flex-col h-screen bg-gray-900">
       {/* Header */}
       <div className="w-full bg-gray-800 border-b border-gray-700 p-4">
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto flex justify-between">
           <h1 className="text-xl font-semibold text-white">Chat</h1>
+          <button className="bg-green-500 border-2 rounded w-20 h-10 hover:cursor-pointer">
+            Share
+          </button>
         </div>
       </div>
 
@@ -63,14 +70,14 @@ export default function Home() {
             <div
               key={index}
               className={`flex gap-4 mb-4 ${
-                msg.role === "ai"
+                msg.role === "assistant"
                   ? "justify-start"
                   : "justify-end flex-row-reverse"
               }`}
             >
               <div
                 className={`px-4 py-2 rounded-2xl max-w-[80%] ${
-                  msg.role === "ai"
+                  msg.role === "assistant"
                     ? "bg-gray-800 border border-gray-700 text-gray-100"
                     : "bg-cyan-600 text-white ml-auto"
                 }`}
